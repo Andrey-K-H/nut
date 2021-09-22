@@ -47,6 +47,21 @@ const char *UPS_VERSION = NUT_VERSION_MACRO;
 # endif
 #endif
 
+// https://stackoverflow.com/a/12844426/4715872
+#include <sys/types.h>
+#include <limits.h>
+#include <stdlib.h>
+pid_t get_max_pid_t()
+{
+	if (sizeof(pid_t) == sizeof(short)) return SHRT_MAX;
+	if (sizeof(pid_t) == sizeof(int)) return INT_MAX;
+	if (sizeof(pid_t) == sizeof(long)) return LONG_MAX;
+#if defined(LLONG_MAX)  // C99
+	if (sizeof(pid_t) == sizeof(long long)) return LLONG_MAX;
+#endif
+	abort();
+}
+
 	int	nut_debug_level = 0;
 	int	nut_log_level = 0;
 	static	int	upslog_flags = UPSLOG_STDERR;
@@ -249,7 +264,7 @@ int sendsignalfn(const char *pidfn, int sig)
 {
 	char	buf[SMALLBUF];
 	FILE	*pidf;
-	long	pid;
+	pid_t	pid = -1;
 	int	ret;
 
 	pidf = fopen(pidfn, "r");
@@ -264,10 +279,17 @@ int sendsignalfn(const char *pidfn, int sig)
 		return -1;
 	}
 
-	pid = strtol(buf, (char **)NULL, 10);
+	{ // scoping
+		intmax_t _pid = strtol(buf, (char **)NULL, 10); // assuming 10 digits for a long
+		if (_pid <= get_max_pid_t()) {
+			pid = (pid_t)_pid;
+		} else {
+			upslogx(LOG_NOTICE, "Received a pid number too big for a pid_t: %" PRIdMAX, _pid);
+		}
+	}
 
 	if (pid < 2) {
-		upslogx(LOG_NOTICE, "Ignoring invalid pid number %ld", pid);
+		upslogx(LOG_NOTICE, "Ignoring invalid pid number %" PRIdMAX, (intmax_t) pid);
 		fclose(pidf);
 		return -1;
 	}
