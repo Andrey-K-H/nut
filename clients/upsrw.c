@@ -285,7 +285,7 @@ static void do_setvar(const char *varname, char *uin, const char *pass)
 static const char *get_data(const char *type, const char *varname)
 {
 	int	ret;
-	unsigned int	numq, numa;
+	size_t	numq, numa;
 	char	**answer;
 	const char	*query[4];
 
@@ -343,7 +343,7 @@ static void do_number(const char *varname)
 static void do_enum(const char *varname, const int vartype, const long len)
 {
 	int	ret;
-	unsigned int	numq, numa;
+	size_t	numq, numa;
 	char	**answer, buf[SMALLBUF];
 	const char	*query[4], *val;
 
@@ -383,7 +383,7 @@ static void do_enum(const char *varname, const int vartype, const long len)
 		/* ENUM <upsname> <varname> <value> */
 
 		if (numa < 4) {
-			fatalx(EXIT_FAILURE, "Error: insufficient data (got %d args, need at least 4)", numa);
+			fatalx(EXIT_FAILURE, "Error: insufficient data (got %zu args, need at least 4)", numa);
 		}
 
 		printf("Option: \"%s\"", answer[3]);
@@ -401,7 +401,7 @@ static void do_enum(const char *varname, const int vartype, const long len)
 static void do_range(const char *varname)
 {
 	int	ret;
-	unsigned int	numq, numa;
+	size_t	numq, numa;
 	char	**answer;
 	const char	*query[4], *val;
 	int ival, min, max;
@@ -436,7 +436,7 @@ static void do_range(const char *varname)
 		/* RANGE <upsname> <varname> <min> <max> */
 
 		if (numa < 5) {
-			fatalx(EXIT_FAILURE, "Error: insufficient data (got %d args, need at least 4)", numa);
+			fatalx(EXIT_FAILURE, "Error: insufficient data (got %zu args, need at least 4)", numa);
 		}
 
 		min = atoi(answer[3]);
@@ -458,7 +458,7 @@ static void do_type(const char *varname)
 {
 	int	ret;
 	int is_enum = 0; /* 1 if ENUM; FIXME: add a boolean type in common.h */
-	unsigned int	i, numq, numa;
+	size_t	i, numq, numa;
 	char	**answer;
 	const char	*query[4];
 
@@ -545,7 +545,7 @@ static void print_rw(const char *varname)
 static void print_rwlist(void)
 {
 	int	ret;
-	unsigned int	numq, numa;
+	size_t	numq, numa;
 	const char	*query[2];
 	char	**answer;
 	struct	list_t	*lhead, *llast, *ltmp, *lnext;
@@ -579,7 +579,7 @@ static void print_rwlist(void)
 
 		/* RW <upsname> <varname> <value> */
 		if (numa < 4) {
-			fatalx(EXIT_FAILURE, "Error: insufficient data (got %d args, need at least 4)", numa);
+			fatalx(EXIT_FAILURE, "Error: insufficient data (got %zu args, need at least 4)", numa);
 		}
 
 		/* sock this entry away for later */
