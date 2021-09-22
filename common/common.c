@@ -1,6 +1,7 @@
 /* common.c - common useful functions
 
    Copyright (C) 2000  Russell Kroll <rkroll@exploits.org>
+   Copyright (C) 2021  Jim Klimov <jimklimov+nut@gmail.com>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -53,11 +54,11 @@ const char *UPS_VERSION = NUT_VERSION_MACRO;
 #include <stdlib.h>
 pid_t get_max_pid_t()
 {
-	if (sizeof(pid_t) == sizeof(short)) return SHRT_MAX;
-	if (sizeof(pid_t) == sizeof(int)) return INT_MAX;
-	if (sizeof(pid_t) == sizeof(long)) return LONG_MAX;
+	if (sizeof(pid_t) == sizeof(short)) return (pid_t)SHRT_MAX;
+	if (sizeof(pid_t) == sizeof(int)) return (pid_t)INT_MAX;
+	if (sizeof(pid_t) == sizeof(long)) return (pid_t)LONG_MAX;
 #if defined(LLONG_MAX)  // C99
-	if (sizeof(pid_t) == sizeof(long long)) return LLONG_MAX;
+	if (sizeof(pid_t) == sizeof(long long)) return (pid_t)LLONG_MAX;
 #endif
 	abort();
 }
