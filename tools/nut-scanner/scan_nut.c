@@ -49,7 +49,7 @@ static pthread_mutex_t dev_mutex;
 
 struct scan_nut_arg {
 	char * hostname;
-	long timeout;
+	useconds_t timeout;
 };
 
 /* return 0 on error; visible externally */
@@ -206,7 +206,7 @@ static void * list_nut_devices(void * arg)
 	return NULL;
 }
 
-nutscan_device_t * nutscan_scan_nut(const char* startIP, const char* stopIP, const char* port, long usec_timeout)
+nutscan_device_t * nutscan_scan_nut(const char* startIP, const char* stopIP, const char* port, useconds_t usec_timeout)
 {
 	nutscan_ip_iter_t ip;
 	char * ip_str = NULL;

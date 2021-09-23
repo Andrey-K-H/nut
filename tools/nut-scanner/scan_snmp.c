@@ -74,7 +74,7 @@ static nutscan_device_t * dev_ret = NULL;
 #ifdef HAVE_PTHREAD
 static pthread_mutex_t dev_mutex;
 #endif
-static long g_usec_timeout ;
+static useconds_t g_usec_timeout ;
 
 /* dynamic link library stuff */
 static lt_dlhandle dl_handle = NULL;
@@ -714,7 +714,7 @@ try_SysOID_free:
 }
 
 nutscan_device_t * nutscan_scan_snmp(const char * start_ip, const char * stop_ip,
-                                     long usec_timeout, nutscan_snmp_t * sec)
+                                     useconds_t usec_timeout, nutscan_snmp_t * sec)
 {
 	nutscan_snmp_t * tmp_sec;
 	nutscan_ip_iter_t ip;
@@ -782,7 +782,7 @@ nutscan_device_t * nutscan_scan_snmp(const char * start_ip, const char * stop_ip
 }
 #else /* WITH_SNMP */
 nutscan_device_t * nutscan_scan_snmp(const char * start_ip, const char * stop_ip,
-                                     long usec_timeout, nutscan_snmp_t * sec)
+                                     useconds_t usec_timeout, nutscan_snmp_t * sec)
 {
 	NUT_UNUSED_VARIABLE(start_ip);
 	NUT_UNUSED_VARIABLE(stop_ip);

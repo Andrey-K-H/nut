@@ -167,7 +167,7 @@ static void * nutscan_scan_xml_http_generic(void * arg)
 	uint16_t port_udp = 4679;
 /* A NULL "ip" causes a broadcast scan; otherwise the single ip address is queried directly */
 	char *ip = NULL;
-	long usec_timeout = -1;
+	useconds_t usec_timeout = 0;
 	int peerSocket;
 	int sockopt_on = 1;
 	struct sockaddr_in sockAddress_udp;
@@ -213,16 +213,16 @@ static void * nutscan_scan_xml_http_generic(void * arg)
 		if (ip == NULL) {
 			upsdebugx(2,
 				"nutscan_scan_xml_http_generic() : scanning connected network segment(s) "
-				"with a broadcast, attempt %d of %d with a timeout of %ld usec",
-				(i+1), MAX_RETRIES, usec_timeout);
+				"with a broadcast, attempt %d of %d with a timeout of %jd usec",
+				(i+1), MAX_RETRIES, (uintmax_t)usec_timeout);
 			sockAddress_udp.sin_addr.s_addr = INADDR_BROADCAST;
 			setsockopt(peerSocket, SOL_SOCKET, SO_BROADCAST, &sockopt_on,
 				sizeof(sockopt_on));
 		} else {
 			upsdebugx(2,
 				"nutscan_scan_xml_http_generic() : scanning IP '%s' with a unicast, "
-				"attempt %d of %d with a timeout of %ld usec",
-				ip, (i+1), MAX_RETRIES, usec_timeout);
+				"attempt %d of %d with a timeout of %jd usec",
+				ip, (i+1), MAX_RETRIES, (uintmax_t)usec_timeout);
 			inet_pton(AF_INET, ip, &(sockAddress_udp.sin_addr));
 		}
 		sockAddress_udp.sin_port = htons(port_udp);
@@ -382,7 +382,7 @@ end:
 	return NULL;
 }
 
-nutscan_device_t * nutscan_scan_xml_http_range(const char * start_ip, const char * end_ip, long usec_timeout, nutscan_xml_t * sec)
+nutscan_device_t * nutscan_scan_xml_http_range(const char * start_ip, const char * end_ip, useconds_t usec_timeout, nutscan_xml_t * sec)
 {
 	nutscan_xml_t * tmp_sec = NULL;
 	nutscan_device_t * result = NULL;
@@ -424,7 +424,9 @@ nutscan_device_t * nutscan_scan_xml_http_range(const char * start_ip, const char
 				}
 				memcpy(tmp_sec, sec, sizeof(nutscan_xml_t));
 				tmp_sec->peername = ip_str;
-				if (tmp_sec->usec_timeout < 0) tmp_sec->usec_timeout = usec_timeout;
+				if (tmp_sec->usec_timeout <= 0) {
+					tmp_sec->usec_timeout = usec_timeout;
+				}
 
 #ifdef HAVE_PTHREAD
 				if (pthread_create(&thread, NULL, nutscan_scan_xml_http_generic, (void *)tmp_sec) == 0) {
@@ -477,7 +479,7 @@ nutscan_device_t * nutscan_scan_xml_http_range(const char * start_ip, const char
 		tmp_sec->peername = strdup(start_ip);
 	}
 
-	if (tmp_sec->usec_timeout < 0) {
+	if (tmp_sec->usec_timeout <= 0) {
 		tmp_sec->usec_timeout = usec_timeout;
 	}
 
