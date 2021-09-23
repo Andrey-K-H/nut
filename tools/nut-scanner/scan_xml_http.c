@@ -386,7 +386,7 @@ nutscan_device_t * nutscan_scan_xml_http_range(const char * start_ip, const char
 {
 	nutscan_xml_t * tmp_sec = NULL;
 	nutscan_device_t * result = NULL;
-	int i;
+	size_t i;
 
 	if (!nutscan_avail_xml_http) {
 		return NULL;
@@ -408,7 +408,7 @@ nutscan_device_t * nutscan_scan_xml_http_range(const char * start_ip, const char
 #ifdef HAVE_PTHREAD
 			pthread_t thread;
 			pthread_t * thread_array = NULL;
-			int thread_count = 0;
+			size_t thread_count = 0;
 
 			pthread_mutex_init(&dev_mutex, NULL);
 #endif
