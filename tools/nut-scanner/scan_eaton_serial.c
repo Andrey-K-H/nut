@@ -398,11 +398,11 @@ nutscan_device_t * nutscan_scan_eaton_serial(const char* ports_range)
 	char *current_port_name = NULL;
 	char **serial_ports_list;
 	int  current_port_nb;
-	int i;
+	size_t i;
 #ifdef HAVE_PTHREAD
 	pthread_t thread;
 	pthread_t * thread_array = NULL;
-	int thread_count = 0;
+	size_t thread_count = 0;
 
 	pthread_mutex_init(&dev_mutex, NULL);
 #endif
@@ -436,7 +436,7 @@ nutscan_device_t * nutscan_scan_eaton_serial(const char* ports_range)
 		if (pthread_create(&thread, NULL, nutscan_scan_eaton_serial_device, (void*)current_port_name) == 0) {
 			thread_count++;
 			pthread_t *new_thread_array = realloc(thread_array,
-						thread_count*sizeof(pthread_t));
+				thread_count*sizeof(pthread_t));
 			if (new_thread_array == NULL) {
 				upsdebugx(1, "%s: Failed to realloc thread", __func__);
 				break;
