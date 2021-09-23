@@ -214,12 +214,11 @@ nutscan_device_t * nutscan_scan_nut(const char* startIP, const char* stopIP, con
 	char buf[SMALLBUF];
 	struct sigaction oldact;
 	int change_action_handler = 0;
-	int i;
 	struct scan_nut_arg *nut_arg;
 #ifdef HAVE_PTHREAD
 	pthread_t thread;
 	pthread_t * thread_array = NULL;
-	int thread_count = 0;
+	size_t thread_count = 0, i;
 
 	pthread_mutex_init(&dev_mutex, NULL);
 #endif
